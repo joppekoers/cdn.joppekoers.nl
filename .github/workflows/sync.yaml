@@ -1,0 +1,27 @@
+name: Sync to joppekoers.nl
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger sync on joppekoers.nl
+        env:
+          SYNC_URL: ${{ secrets.SYNC_URL }}
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 600 \
+            -X POST \
+            -H "Authorization: Bearer $SYNC_TOKEN" \
+            "$SYNC_URL"
